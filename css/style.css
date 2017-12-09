@@ -1,0 +1,170 @@
+body {
+    background-color: rgb(224, 224, 224);
+    font-family: 'Josefin Slab', serif;
+    font-size: 24px;
+}
+
+ul {
+    padding: 0;
+    margin: 0;
+}
+
+li {
+    list-style-type: none;
+    padding: 10px 0 10px;
+    border: none;
+    border-bottom: 2px solid black;
+    font-size: 32px;
+    text-align: left;
+}
+
+li:hover>.btn-delete {
+    color: rgba(0,0,0,128);
+    background-image: url(/images/cross.png);
+    background-size: 24px;
+    background-repeat: no-repeat;
+    background-position: bottom center;
+}
+
+li:hover>.btn-delete:active {
+    outline: none;
+}
+
+::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+    color: rgb(0, 0, 0);
+    opacity: 0.25; 
+}
+
+:-ms-input-placeholder { /* Internet Explorer 10-11 */
+    color: rgb(0, 0, 0);
+    opacity: 0.25; 
+}
+
+::-ms-input-placeholder { /* Microsoft Edge */
+    color: rgb(0, 0, 0);
+    opacity: 0.25;
+}
+
+.active {
+    color: black;
+    text-decoration: none;
+}
+
+.completed {
+    text-decoration: line-through;
+    color: grey;
+}
+
+h1 {
+    text-align: center;
+    font-size: 4em;
+    margin: 10% 0 2% 0;
+}
+
+.container {
+    display: flex;
+    align-content: center;
+}
+
+.shadow-box {
+    width: 540px;
+    margin: 0 auto;
+    box-shadow: 10px 10px 35px grey;
+    background-color: white;
+}
+
+.input-todos {
+    width: 100%;
+}
+
+.list-todos {
+    margin: 0;
+    width: 100%;
+    padding: 0;
+    background-color: white;
+}
+
+.btn {
+    border: none;
+    background-color: rgb(255, 255, 255);
+    font-size: 14px;
+    margin: 0 auto;
+    padding: 15px 0px;
+    color: grey;
+}
+
+.btn-status {
+    width: 35px;
+    height: 35px;
+    border: 2px none rgb(223, 223, 223);
+    background-color: white;
+    margin: 0 0 0 0px;
+    position: relative;
+    left: 15px;
+    top: 0px;
+    background-image: url(/images/circle.png);
+    background-position: top center;
+    background-size: 35px;
+}
+
+.completed>.btn-status {
+    background-image: url(/images/check-mark2.png),
+                      url(/images/circle.png);
+    background-size: 45px, 35px ;
+    background-position:  bottom center, top center;
+}
+
+.btn-status:active {
+    outline: none;
+}
+
+.btn-delete {
+    width: 35px;
+    height: 35px;
+    border: none;
+    background-color: white;
+    margin: 5px 0 0 0;
+    padding: 0;
+    position: relative;
+    left: 440px;
+    top: 0px;
+}
+
+.btn-active {
+    border: 2px solid red;
+}
+
+.btn-row {
+    display: flex;
+    width: 500px;
+    margin: 0 auto;
+    align-content: center;
+}
+
+.todo-text {
+    width: 400px;
+    display: inline-block;
+    margin: 0 0 0px;
+    padding: 0;
+    white-space: nowrap; 
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.completed > .todo-text {
+    text-decoration: line-through;
+}
+
+#text-field {
+    height: 64px;
+    width:  410px;
+    padding: 12px 65px 0;
+    margin: 0 auto;
+    font-size: 32px;
+    font-family: 'Josefin Slab', serif;
+    border: none;
+}
+
+#text-field:focus {
+    outline: none;
+}

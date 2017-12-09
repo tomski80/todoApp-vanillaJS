@@ -47,41 +47,69 @@ function saveList(list){
     }
 }
 
-window.onload = function(){
+function changeTaskStatus(task){
+    task.innerHTML = 'Changed!';
+}
 
+function deleteTask(task){
+    task.innerHTML = 'Deleted!';
+}
+
+function updateDOMList(list){
+
+    //clear list
+    let itemsList = document.getElementById('items-list');
+    while(itemsList.firstChild){
+        itemsList.removeChild(itemsList.firstChild);
+    }
+    //add existing list elements to DOM 
+    list.forEach( (row) => {
+        addElement(row);
+    });
+}
+
+function addElement(task){
+    let itemsList = document.getElementById('items-list'),
+        item = document.createElement('li'),
+        taskText = document.createTextNode(task.name),
+        btnStatus  = document.createElement('button'),
+        btnDelete  = document.createElement('button');
+
+    item.appendChild(btnStatus);
+    item.appendChild(taskText);
+    item.appendChild(btnDelete);
+    itemsList.appendChild(item);
+    itemsList.insertBefore(item, itemsList.childNodes[0]);
+    btnStatus.addEventListener('click',function(){changeTaskStatus(item);});
+    btnDelete.addEventListener('click',function(){deleteTask(item);});
+}
+
+window.onload = function(){
+    
     let todoList = [];
     todoList = retrieveList();
+    console.log(todoList);
+    updateDOMList(todoList);
 
+    //delete all button
+    let button = document.getElementsByClassName('btn');
+    button[0].onclick = () =>{
+        localStorage.clear();
+        todoList = retrieveList();
+        updateDOMList(todoList);
+    };
+
+    //add task to list 
     let textField = document.getElementById('text-field');
-    //add existing list elements to DOM 
-    let itemsList = document.getElementById('items-list');
-    todoList.forEach( (row) => {
-        let item = document.createElement('li');
-        item.innerHTML = row;
-        itemsList.appendChild(item);    
-        item.addEventListener('click',function(){changeLi(item);});
-    });
-
     textField.onkeyup = function(event){
         event.preventDefault();
         
         if(event.keyCode===13){
-            let itemsList = document.getElementById('items-list'),
-                item = document.createElement('li');
-
-            //item.setAttribute('')
-            item.innerHTML = textField.value;
-            itemsList.appendChild(item);
-            itemsList.insertBefore(item, itemsList.childNodes[0]);
-            item.addEventListener('click',function(){changeLi(item);});
-            
-            todoList.unshift(textField.value);
+            let task = {'name':textField.value,'status':'active'};
+            addElement(task);    
+            todoList.unshift(task);
             saveList(todoList);
         }
     };
-
-    function changeLi(list){
-        list.innerHTML = 'Changed!';
-    }
 
 };
