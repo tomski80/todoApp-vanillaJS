@@ -22,23 +22,6 @@ function storageAvailable(type) {
     }
 }
 
-function retrieveList(){
-    if (storageAvailable('localStorage')) {
-        // Yippee! We can use localStorage awesomeness
-        if(!localStorage.getItem('todoList')){
-            return [];
-        }else{
-            return JSON.parse(localStorage.getItem('todoList'));
-        }
-
-    }else{
-        // Too bad, no localStorage for us
-        alert('Sorry! Couldn\'t access data!');
-        return [];
-    }
-}
-
-
 function Item(name){
     this.status = 'active';
     this.name = name;
@@ -76,7 +59,7 @@ Table.prototype = {
         if (storageAvailable('localStorage')) {
         // Yippee! We can use localStorage awesomeness
             if(!localStorage.getItem('todoAppRows')){
-                console.log('There is no data yet!');
+                //do nothing
             }else{
                 this.rows = JSON.parse(localStorage.getItem('todoAppRows'));
 
@@ -105,7 +88,7 @@ Table.prototype = {
         }
     },
 
-    renderToDOM :function(root){
+    renderToDOM :function(root,page){
         
         //clear list
         let itemsList = root; //document.getElementById('items-list');
@@ -115,41 +98,44 @@ Table.prototype = {
         
         let instaceOfTable = this;
         this.rows.forEach( function(row){
+        
             let item = document.createElement('li'),
-                taskText = document.createTextNode(row.name),
                 span = document.createElement('span'),
                 btnStatus  = document.createElement('button'),
                 btnDelete  = document.createElement('button');
             btnStatus.classList.add('btn-status');
             btnDelete.classList.add('btn-delete');
-            span.classList.add('todo-text')
+            span.classList.add('todo-text');
             span.innerHTML = row.name;
 
             item.appendChild(btnStatus);
             item.appendChild(btnDelete);
             item.appendChild(span);
-            itemsList.appendChild(item);
-            itemsList.insertBefore(item, itemsList.childNodes[0]);
+
+            if( row.status === page || page === 'all'){
+                itemsList.appendChild(item);
+                itemsList.insertBefore(item, itemsList.childNodes[0]);
 
                         
-            if(row.status === 'completed'){
-                item.classList.add('completed');
-                item.classList.remove('active');
-            }else{
-                item.classList.remove('completed');
-                item.classList.add('active');
-            }
+                if(row.status === 'completed'){
+                    item.classList.add('completed');
+                    item.classList.remove('active');
+                }else{
+                    item.classList.remove('completed');
+                    item.classList.add('active');
+                }
 
-            btnStatus.addEventListener('click',function(){
-                row.status === 'active' ? row.status = 'completed' : row.status = 'active';
-                let event = new Event('refreshDOM');
-                document.dispatchEvent(event);
-            });
-            btnDelete.addEventListener('click',function(){
-                instaceOfTable.removeItem(row);
-                let event = new Event('refreshDOM');
-                document.dispatchEvent(event);
-            });
+                btnStatus.addEventListener('click',function(){
+                    row.status === 'active' ? row.status = 'completed' : row.status = 'active';
+                    let event = new Event('refreshDOM');
+                    document.dispatchEvent(event);
+                });
+                btnDelete.addEventListener('click',function(){
+                    instaceOfTable.removeItem(row);
+                    let event = new Event('refreshDOM');
+                    document.dispatchEvent(event);
+                });
+            }
         });      
     }     
 };
@@ -158,9 +144,11 @@ window.onload = function(){
 
     let table = new Table,
         tableRootElement = document.getElementById('items-list'),
-        eventRefreshDOM = new Event('refreshDOM');
+        eventRefreshDOM = new Event('refreshDOM'),
+        page = 'all';
+
     table.loadData();
-    table.renderToDOM(tableRootElement);
+    table.renderToDOM(tableRootElement,page);
 
     //add new item (task) to todo List (table)
     //when user press enter on text field
@@ -175,6 +163,35 @@ window.onload = function(){
         } 
     };
 
+    //switch pages
+    let btnAll = document.getElementById('btn-all'),
+        btnActive = document.getElementById('btn-active'),
+        btnCompleted = document.getElementById('btn-completed'),
+        btnClear = document.getElementById('btn-clear');
+
+    btnAll.onclick = function(){
+        page = 'all';
+        updateBtnClass('btn-all');
+    };
+    btnActive.onclick = function(){
+        page = 'active';
+        updateBtnClass('btn-active');
+    };
+    btnCompleted.onclick = function(){
+        page = 'completed';
+        updateBtnClass('btn-completed');
+    };
+
+    //remove completed tasks
+    btnClear.onclick = function(){
+        table.rows.forEach( function(row){
+            if(row.status === 'completed'){
+                table.removeItem(row);
+            }
+        });
+        document.dispatchEvent(eventRefreshDOM);
+    };
+
     //clear all data when user click delete All button!
     let button = document.getElementsByClassName('btn');
     button[0].onclick = () =>{
@@ -183,8 +200,18 @@ window.onload = function(){
     };
 
     document.addEventListener('refreshDOM', function(){
-        table.renderToDOM(tableRootElement);
+        table.renderToDOM(tableRootElement,page);
         //store data on every change
         table.saveData();
     });
+
+    function updateBtnClass(btnId){
+        let allBtn = document.getElementsByClassName('btn');
+        for(let i = 0; i < allBtn.length; i++){
+            allBtn[i].classList.remove('btn-active');
+        }
+        document.getElementById(btnId).classList.add('btn-active');
+        document.dispatchEvent(eventRefreshDOM);
+    }
+
 };
